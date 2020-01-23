@@ -1,0 +1,55 @@
+Constant Story "THROUGH THE LOOKING GLASS";
+Constant Headline "^An Interactive Tutorial^by Gareth Rees^";
+Constant DEBUG;
+
+Include "parser";
+Include "verblib";
+Include "grammar";
+
+[ Initialise;
+ location = Drawing_Room;
+ print "^^^^^It's a cold winter day outside, but in the looking-glass
+ house it's summer. All you need to do is pretend there's a way of
+ getting through into it somehow...^^";
+];
+
+Object Drawing_Room "Drawing room"
+has light
+with name "snow",
+ description "The gentle sound of snow against the window pane
+ suggests that it's cold outside, and you're glad to be here
+ in the warmth. The drawing-room is reflected in the large
+ looking-glass on the wall above the mantelpiece, and a very
+ comfortable room it is too, with a warm hearth, a soft rug,
+ and an arm-chair that you can curl up and sleep in.";
+
+Object  chess_board "chess board" Drawing_Room
+ has    supporter
+ with   name "chess" "board" "checker" "chequer" "chessboard",
+        initial "An abandoned chess board lies on the floor.",
+        description "It's left here from the game you were playing just
+            now, but the pieces are all missing - the kittens will insist
+            on playing with them.";
+
+!Object  rug "rug" Drawing_Room
+ has    concealed static supporter enterable
+        ! general if you've found the red queen under it
+ with   name "hearthrug" "hearth-rug" "rug" "indian" "arabian" "beautiful"
+            "soft",
+        description "It's a beautiful rug, made in some far off country,
+            perhaps India or Araby, wherever those might be.",
+        before [;
+         Take: "The rug is much too large and heavy for you to carry.";
+         Push,Pull: "But a hearth-rug is meant to be next to the hearth!";
+         LookUnder:
+            if (player in self)
+                "You try to lift up a corner of the rug, but fail. After
+                a while, you realise that this is because you are
+                standing on it. How curious the world is!";
+            if (self hasnt general) {
+                give self general;
+                move red_queen to player;
+                "You lift up a corner of the rug and, peering underneath,
+                discover the red queen from the chess set.";
+            }
+        ];
